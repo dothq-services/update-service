@@ -1,0 +1,114 @@
+.hmm-icon {
+    background-image: url(../assets/hmm.svg);
+    background-size: cover;
+    width: 64px;
+    height: 64px;
+  }
+  
+  .cryhmm-icon {
+    background-image: url(../assets/cryhmm.svg);
+    background-size: cover;
+    width: 64px;
+    height: 64px;
+  }
+  
+  .back-icon {
+    background-image: url(../assets/back.svg);
+    background-size: cover;
+    width: 16px;
+    height: 16px;
+  }
+  
+  .home-icon {
+    background-image: url(../assets/home.svg);
+    background-size: cover;
+    width: 16px;
+    height: 16px;
+  }
+  
+  .globe-icon {
+    background-image: url(../assets/globe.svg);
+    background-size: cover;
+    width: 16px;
+    height: 16px;
+  }
+  
+  .forward-icon {
+    background-image: url(../assets/back.svg);
+    background-size: cover;
+    width: 16px;
+    height: 16px;
+    transform: scale(-1);
+  }
+  
+  .menu-icon {
+    background-image: url(../assets/menu.svg);
+    background-size: cover;
+    width: 16px;
+    height: 16px;
+    margin-right: 0 !important;
+  }
+  
+  .twitter-icon {
+    background-image: url(../assets/footer/twitter.svg);
+    background-size: cover;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    filter: var(--btn-secondary-icon);
+  }
+  
+  .discord-icon {
+    background-image: url(../assets/footer/discord.svg);
+    background-size: cover;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    filter: var(--btn-secondary-icon);
+  }
+  
+  .youtube-icon {
+    background-image: url(../assets/footer/youtube.svg);
+    background-size: cover;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    filter: var(--btn-secondary-icon);
+  }
+  
+  .dot-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 100px;
+    background-color: var(--color);
+    display: block;
+  }
+  
+  .dot-browser-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 100px;
+    box-shadow: inset 0px 0px 0px 6px var(--color);
+    display: block;
+  }
+  
+  .windows-icon {
+    background-image: url(../assets/os/windows.svg);
+    background-size: cover !important;
+    width: 16px !important;
+    height: 16px !important;
+  }
+  
+  .macos-icon {
+    background-image: url(../assets/os/macos.svg);
+    background-size: cover !important;
+    width: 16px !important;
+    height: 16px !important;
+  }
+  
+  .linux-icon {
+    background-image: url(../assets/os/linux.svg);
+    background-size: cover !important;
+    width: 16px !important;
+    height: 16px !important;
+  }
