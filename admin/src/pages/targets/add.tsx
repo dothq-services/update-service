@@ -2,10 +2,47 @@ import React from 'react'
 import { Layout } from '../../components/Layout'
 import { Content } from '../../components/Content'
 import { Button } from '../../components/Button'
-import { TextField, InputLabel, MenuItem, FormHelperText, FormControl, Select } from '@material-ui/core'
-import { FormLocaleSelector } from '../../components/Form/Locale'
+import { TextField } from '@material-ui/core'
+import axios from 'axios'
 
 const AddTarget = () => {
+    const [tName, setTName] = React.useState('')
+    const [tDisplayName, setTDisplayName] = React.useState('')
+    const [showSuccessScreen, setShowSuccessScreen] = React.useState(false)
+
+    const handleTNameChange = (e) => {
+        setTName(e.target.value)
+    }
+
+    const handleTDisplayNameChange = (e) => {
+        setTDisplayName(e.target.value)
+    }
+
+    // Errors
+    const [tNameE, setTNameE] = React.useState(false)
+    const [tDisplayNameE, setTDisplayNameE] = React.useState(false)
+
+    const submitNewTarget = () => {
+        if (tName === '') {
+            return setTNameE(true)
+        }
+        if (tDisplayName === '') {
+            return setTDisplayNameE(true)
+        }
+        axios.post('/api/add/target', {
+            name: tName,
+            displayname: tDisplayName
+          })
+          .then(function (response) {
+            if (response.status === 200) {
+                setShowSuccessScreen(true)
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    }
+
     return (
         <Layout>
             <Content primary>
@@ -15,19 +52,18 @@ const AddTarget = () => {
                     </div>
                 </div>
             </Content>
-            <Content>
+            <Content visible={showSuccessScreen ? true : false}>
                 <div className={'grid'}>
                     <div className={'flex-grid'}>
                         <div className={'form-control'}>
                             <TextField
                                 fullWidth
                                 variant="outlined"
-                                id="tName"
-                                name="tName"
+                                id="tDisplayName"
+                                name="tDisplayName"
                                 label="Target name (Ex. win64)"
-                                value={null}
-                                onChange={null}
-                                error={null}
+                                onChange={handleTDisplayNameChange}
+                                error={tDisplayNameE}
                                 helperText={'Target name for use within Admin UI.'}
                             />
                         </div>
@@ -35,12 +71,11 @@ const AddTarget = () => {
                             <TextField
                                 fullWidth
                                 variant="outlined"
-                                id="tIName"
-                                name="tIName"
+                                id="tName"
+                                name="tName"
                                 label="Target Advanced name (Ex. WINNT_x86_64-msvc)"
-                                value={null}
-                                onChange={null}
-                                error={null}
+                                onChange={handleTNameChange}
+                                error={tNameE}
                                 helperText={'Advanced Target Name.'}
                             />
                         </div>
@@ -48,19 +83,25 @@ const AddTarget = () => {
                 </div>
             </Content>
 
-            <Content primary>
+            <Content primary visible={showSuccessScreen ? true : false}>
                 <div className={'form-grid'}>
                     <p>Add target aliases</p>
                 </div>
             </Content>
-            <Content primary>
+            <Content primary visible={showSuccessScreen ? true : false}>
                 <div className={'grid'}>
                     <div className={'flex-grid'}>
                         <span />
-                        <Button type={'primary'}>
+                        <Button type={'primary'} onClick={submitNewTarget}>
                             Add Target
                         </Button>
                     </div>
+                </div>
+            </Content>
+
+            <Content primary visible={showSuccessScreen ? false : true}>
+                <div className={'grid'}>
+                    <h3>Target Added Successfully!</h3>
                 </div>
             </Content>
         </Layout>

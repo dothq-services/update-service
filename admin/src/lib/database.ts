@@ -75,9 +75,10 @@ export const Releases = db.define('releases', {
 })
 
 export const Targets = db.define('targets', {
-    target: {
+    name: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        primaryKey: true
     },
     displayname: {
         type: DataTypes.STRING,
@@ -90,21 +91,12 @@ export const Targets = db.define('targets', {
 export const TargetAliases = db.define('target-aliases', {
     target: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        primaryKey: true
     },
     alias: {
         type: DataTypes.STRING,
         allowNull: false
-    }
-}, {
-    timestamps: false
-})
-
-export const Locales = db.define('locales', {
-    locale: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        primaryKey: true
     }
 }, {
     timestamps: false

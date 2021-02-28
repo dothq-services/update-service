@@ -2,8 +2,14 @@ import React from 'react'
 import { Layout } from '../../components/Layout'
 import { Content } from '../../components/Content'
 import { Button } from '../../components/Button'
+import axios from 'axios'
 
 const Targets = () => {
+    const [targets, setTargets] = React.useState({})
+    React.useState(() => {
+        axios.post('/api/get/target').then(res => setTargets(res.data))
+    })
+
     return (
         <Layout>
             <Content primary>
@@ -15,6 +21,13 @@ const Targets = () => {
                         </Button>
                     </div>
                 </div>
+            </Content>
+            <Content>
+                {(targets as any)[0] && (
+                    <>
+                        {(targets as any).map((t) => (<p>{t.displayname}</p>))}
+                    </>
+                )}
             </Content>
         </Layout>
     )

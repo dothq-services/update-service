@@ -15,7 +15,6 @@ export const Header = () => {
                 <a href={'/updates/add'}>Add an Update</a>
                 <span />
                 <a href={'/targets'}>Targets</a>
-                <a href={'/locales'}>Locales</a>
               </ul>
             </div>
   
