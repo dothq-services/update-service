@@ -4,8 +4,10 @@ import { Content } from '../../components/Content'
 import { TextField, Checkbox, InputLabel, MenuItem, FormHelperText, FormControl, FormControlLabel, Select, Button } from '@material-ui/core'
 import { FormLocaleSelector } from '../../components/Form/Locale'
 import { FormTargetSelector } from '../../components/Form/Target'
+import axios from 'axios'
 
 const AddUpdate = () => {
+    const [availableProducts, setAProducts] = React.useState([]);
     const [currentUploadedFile, setCurrentUploadedFile] = React.useState('')
     const [advancedMode, setAdvancedMode] = React.useState(false);
     const [product, setProduct] = React.useState('');
@@ -32,6 +34,15 @@ const AddUpdate = () => {
         if (path.substr(0, 12) == "C:\\fakepath\\")
         return path.substr(12);
     }
+
+    React.useEffect(() => {
+        if(availableProducts.length !== 0) return;
+
+        axios.get("/api/get/products")
+            .then(({ data }) => {
+                setAProducts(data.products);
+            })
+    })
 
     return (
         <Layout>
@@ -68,10 +79,11 @@ const AddUpdate = () => {
                                     id="rProduct"
                                     value={product}
                                     onChange={handleProductChange}
-                                    label="Product">
-                                    <MenuItem value={'Dot'}>Dot Browser</MenuItem>
-                                    <MenuItem value={'SystemAddons'}>System Addons</MenuItem>
-                                    <MenuItem value={'Other'}>Other</MenuItem>
+                                    label="Product"
+                                >
+                                    {availableProducts && availableProducts.map(product => (
+                                        <MenuItem key={product.id} value={product.id}>{product.name}</MenuItem>
+                                    ))}
                                 </Select>
                                 <FormHelperText>Product to tag release under</FormHelperText>
                             </FormControl>
