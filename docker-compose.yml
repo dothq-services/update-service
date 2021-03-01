@@ -15,9 +15,35 @@ services:
     logging:
       driver: none
     healthcheck:
-        test: nc -z -v balrogdb 3306
+        test: nc -z -v dotupdate-db 3306
         interval: 30s
         timeout: 30s
         retries: 10
     volumes:
-      - ./db:/var/lib/mysql
+      - ./db/setup_database.sql:/docker-entrypoint-initdb.d/0_init.sql
+    env_file:
+      - .env
+
+  dotupdate-public:
+    build:
+      context: ./public/.
+      dockerfile: Dockerfile
+    expose:
+      - "9010"
+    ports:
+      - "9010:9010"
+    volumes:
+      - ./public:/app
+
+  dotupdate-admin:
+    build:
+      context: ./admin/.
+      dockerfile: Dockerfile
+    expose:
+      - "9000"
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./admin:/app
+    env_file:
+      - .env

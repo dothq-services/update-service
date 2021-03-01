@@ -62,7 +62,7 @@ export const Releases = db.define('releases', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    releaseha512: {
+    releasesha512: {
         type: DataTypes.STRING,
         allowNull: false
     },
@@ -70,6 +70,14 @@ export const Releases = db.define('releases', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    channel: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    id: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    }
 }, {
     timestamps: false
 })

@@ -1,6 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize'
-import dotenv from 'dotenv'
-require('dotenv').config()
+import path from 'path'
+require('dotenv').config({ path: path.resolve('..', '..', '.env')})
 
 const {
     DB_HOST,

@@ -2,7 +2,7 @@ import express from 'express'
 import { Releases } from './lib/database'
 
 const app = express();
-const port = 9020;
+const port = 9010;
 
 app.get("/", (req, res) => {
     res.send('The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.');

@@ -8,3 +8,5 @@ RUN apt-get -q update \
 
 # Lower error logging to get rid of health check spam
 RUN ["/bin/bash", "-c", "echo '[mysqld]\nlog_error_verbosity=2' > /etc/mysql/mysql.conf.d/errors.cnf"]
+
+ADD ./db/setup_database.sql /docker-entrypoint/initdb.d
