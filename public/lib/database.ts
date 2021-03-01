@@ -1,4 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize'
+import dotenv from 'dotenv'
+require('dotenv').config()
 
 const {
     DB_HOST,
@@ -62,7 +64,7 @@ export const Releases = db.define('releases', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    releaseha512: {
+    releasesha512: {
         type: DataTypes.STRING,
         allowNull: false
     },
@@ -70,6 +72,46 @@ export const Releases = db.define('releases', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    channel: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    id: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    releasesize: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    }
+}, {
+    timestamps: false
+})
+
+export const Targets = db.define('targets', {
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        primaryKey: true
+    },
+    displayname: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+}, {
+    timestamps: false
+})
+
+export const TargetAliases = db.define('target-aliases', {
+    target: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        primaryKey: true
+    },
+    alias: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
 }, {
     timestamps: false
 })
