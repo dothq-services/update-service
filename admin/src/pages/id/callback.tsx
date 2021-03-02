@@ -2,15 +2,21 @@ import React from 'react'
 import { Layout } from '../../components/Layout'
 import { Content } from '../../components/Content'
 import { useRouter } from 'next/router'
+import { useCookies } from 'react-cookie'
 
-const Login = () => {
-    const router = useRouter();
-    
+const Callback = () => {
+    const { query } = useRouter();
+    const router  = useRouter();
+    const [cookie, setCookie] = useCookies(["token"])
+
     React.useEffect(() => {
-        router.push({
-            pathname: '/api/id/login'
-        })
-    })
+        if (query.token) {
+            setCookie('token', query.token)
+            router.push('/')
+        } else {
+            // do something to let user know something went wrong
+        }
+    }, [query.token])
 
     return (
         <Layout>
@@ -25,4 +31,4 @@ const Login = () => {
     )
 }
 
-export default Login;
+export default Callback;
