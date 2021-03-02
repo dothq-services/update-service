@@ -1,7 +1,12 @@
 import React from 'react';
 import { Button } from '@material-ui/core'
+import { useCookies } from 'react-cookie'
+import axios from 'axios';
 
-export const Header = () => {
+export const Header = ({
+  uData,
+  isAuth
+}) => {
   return (
     <>
         <nav className={`nav-nb`}>
@@ -19,9 +24,20 @@ export const Header = () => {
             </div>
   
             <div className={'nav-right'}>
-              <Button color="primary" variant="contained" disableElevation href={'/id/login'}>
-                Sign in
-              </Button>
+              {!isAuth && (
+                <Button color="primary" variant="contained" disableElevation href={'/id/login'}>
+                  Sign in
+                </Button>
+              )}
+              {isAuth && (
+                <>
+                  <img src={uData.avatar_url} style={{ borderRadius: 25, width: 40, height: 40 }} />
+                  <p>{uData.name}</p>
+                  <Button color="primary" variant="contained" disableElevation href={'/id/login'}>
+                    Sign Out
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </nav>

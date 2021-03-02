@@ -6,13 +6,17 @@ import { theme } from '../theme'
 
 export const Layout = ({
   children,
+  uData,
+  isAuth
 }: {
-  children?: any
+  children?: any,
+  uData?: any,
+  isAuth?: any
 }) => {
   return (
     <ThemeProvider theme={theme}>
       <section className={`hero`}>
-        <Header/>
+        <Header uData={uData} isAuth={isAuth}/>
         {children}
         <Footer/>
       </section>

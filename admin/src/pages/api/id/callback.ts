@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { NextApiRequest, NextApiResponse } from 'next'
 import jwt from 'jsonwebtoken'
-import Cookies from 'cookie';
-
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     axios.post('https://github.com/login/oauth/access_token', {
