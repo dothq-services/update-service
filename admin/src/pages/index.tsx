@@ -1,39 +1,28 @@
 import React from 'react'
 import { Layout } from '../components/Layout'
 import { Content } from '../components/Content'
-import { useCookies } from 'react-cookie'
+import * as cookie from 'cookie'
 import axios from 'axios'
+import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router'
 
-const Index = () => {
-    // Is user signed in?
-    const [cookie, setCookie] = useCookies(["token"])
-    const [isAuth, setIsAuth] = React.useState(false)
-    const [uData, setUData] = React.useState({})
-  
-    React.useEffect(() => {
-        if (cookie.token !== undefined) {
-            setIsAuth(true)
-        }
+const Index = (props) => {
+    const router = useRouter();
 
-        if (isAuth) {
-            axios.post('/api/id/getProfile', {
-                token: cookie.token
-            }).then((res) => {
-                setUData(res.data)
-            })
-        }
-    })
+    if (props.noAuth) {
+        router.push('/noauth')
+    }
 
     return (
-        <Layout uData={uData} isAuth={isAuth}>
+        <Layout uData={props.userData} isAuth={props.isAuth}>
             <Content primary>
                 <div className={'grid'}>
                     <div>
                         <h1>Welcome to the Dot HQ Update Server!</h1>
-                        {isAuth && (
-                            <p>Hi, {uData.name}</p>
+                        {props.isAuth && (
+                            <p>Hi, {props.userData.name}</p>
                         )}
-                        {!isAuth && (
+                        {!props.isAuth && (
                             <p>Please sign in to continue.</p>
                         )}
                     </div>
@@ -41,6 +30,45 @@ const Index = () => {
             </Content>
         </Layout>
     )
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const cookies = cookie.parse(context.req ? context.req.headers.cookie || "" : document.cookie)
+    let userData = {};
+    let isAuth: boolean = false;
+    let noAuth: boolean = false;
+
+
+    if (cookies.token !== undefined ) {
+        await axios.post(`http://${context.req.headers.host}/api/id/getOrganizations`, {
+            token: cookies.token
+        }).then((res) => { 
+            if (res.data.success === 'dothq') {
+                isAuth = true
+            }
+        })
+    }
+
+    if (isAuth) {
+        await axios.post(`http://${context.req.headers.host}/api/id/getProfile`, {
+            token: cookies.token
+        }).then((res) => {
+            userData = res.data;
+        })
+    }
+
+    if (cookies.token === undefined) {
+        noAuth = true;
+    }
+
+    return {
+        props: {
+            cookies,
+            isAuth,
+            userData,
+            noAuth
+        }
+    }
 }
 
 export default Index;

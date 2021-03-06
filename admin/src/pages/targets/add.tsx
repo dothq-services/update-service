@@ -4,78 +4,19 @@ import { Content } from '../../components/Content'
 import { TextField, Button } from '@material-ui/core'
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { useCookies } from 'react-cookie'
+import { GetServerSideProps } from 'next'
+import * as cookie from 'cookie'
 
-const AddTarget = () => {
+const AddTarget = (props) => {
     const router  = useRouter();
-
-    // Is user signed in?
-    const [cookie, setCookie] = useCookies(["token"])
-    const [isAuth, setIsAuth] = React.useState(false)
-    const [uData, setUData] = React.useState({})
-
-    const [tName, setTName] = React.useState('')
-    const [tDisplayName, setTDisplayName] = React.useState('')
     const [showSuccessScreen, setShowSuccessScreen] = React.useState(false)
 
-    const handleTNameChange = (e) => {
-        setTName(e.target.value)
+    if (props.noAuth) {
+        router.push('/noauth')
     }
-
-    const handleTDisplayNameChange = (e) => {
-        setTDisplayName(e.target.value)
-    }
-
-    // Errors
-    const [tNameE, setTNameE] = React.useState(false)
-    const [tDisplayNameE, setTDisplayNameE] = React.useState(false)
-
-    const submitNewTarget = () => {
-        if (tName === '') {
-            return setTNameE(true)
-        }
-        if (tDisplayName === '') {
-            return setTDisplayNameE(true)
-        }
-        axios.post('/api/add/target', {
-            name: tName,
-            displayname: tDisplayName
-          })
-          .then(function (response) {
-            if (response.status === 200) {
-                setShowSuccessScreen(true)
-            }
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-    }
-  
-    React.useEffect(() => {
-        // stupidly weird way to verify user is in dothq org
-        if (cookie.token !== undefined && axios.post('/api/id/getOrganizations', {
-            token: cookie.token  
-        }).then((res) => {
-            res.data.success === 'dothq'
-        })) {
-            setIsAuth(true)
-        }
-
-        if (isAuth) {
-            axios.post('/api/id/getProfile', {
-                token: cookie.token
-            }).then((res) => {
-                setUData(res.data)
-            })
-        }
-
-        if (cookie.token === undefined) {
-            router.push(`/noauth`)
-        }
-    })
     
     return (
-        <Layout uData={uData} isAuth={isAuth}>
+        <Layout uData={props.userData} isAuth={props.isAuth}>
             <Content primary>
                 <div className={'grid'}>
                     <div className={'flex-grid'}>
@@ -93,8 +34,6 @@ const AddTarget = () => {
                                 id="tDisplayName"
                                 name="tDisplayName"
                                 label="Target name (Ex. win64)"
-                                onChange={handleTDisplayNameChange}
-                                error={tDisplayNameE}
                                 helperText={'Target name for use within Admin UI.'}
                             />
                         </div>
@@ -105,8 +44,6 @@ const AddTarget = () => {
                                 id="tName"
                                 name="tName"
                                 label="Target Advanced name (Ex. WINNT_x86_64-msvc)"
-                                onChange={handleTNameChange}
-                                error={tNameE}
                                 helperText={'Advanced Target Name.'}
                             />
                         </div>
@@ -123,7 +60,7 @@ const AddTarget = () => {
                 <div className={'grid'}>
                     <div className={'flex-grid'}>
                         <span />
-                        <Button color="primary" variant="contained" disableElevation onClick={submitNewTarget}>
+                        <Button color="primary" variant="contained" disableElevation>
                             Add Target
                         </Button>
                     </div>
@@ -137,6 +74,45 @@ const AddTarget = () => {
             </Content>
         </Layout>
     )
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const cookies = cookie.parse(context.req ? context.req.headers.cookie || "" : document.cookie)
+    let userData = {};
+    let isAuth: boolean = false;
+    let noAuth: boolean = false;
+
+
+    if (cookies.token !== undefined ) {
+        await axios.post(`http://${context.req.headers.host}/api/id/getOrganizations`, {
+            token: cookies.token
+        }).then((res) => { 
+            if (res.data.success === 'dothq') {
+                isAuth = true
+            }
+        })
+    }
+
+    if (isAuth) {
+        await axios.post(`http://${context.req.headers.host}/api/id/getProfile`, {
+            token: cookies.token
+        }).then((res) => {
+            userData = res.data;
+        })
+    }
+
+    if (cookies.token === undefined) {
+        noAuth = true;
+    }
+
+    return {
+        props: {
+            cookies,
+            isAuth,
+            userData,
+            noAuth
+        }
+    }
 }
 
 export default AddTarget;

@@ -9,18 +9,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     )
     axios.get('https://api.github.com/user/orgs', {
         headers: {
-            'Authorization': `bearer ${token.token}`,
+            'Authorization': `Bearer ${token.token}`,
             'Accept': 'application/vnd.github.v3+json'
         }
     }).then((ghreq) => {
         var i
-        for (i=0; i < (ghreq as any).length; ++i) { 
-            if (JSON[i].login === 'dothq') { 
+        for (i=0; i < (ghreq as any).data.length; ++i) { 
+            if (ghreq.data[i].login === 'dothq') { 
+                console.log('success')
                 res.json({ success: 'dothq' })
             } 
         }
 
     }).catch((err) => {
-        res.send('err')
+        res.send('err: ' + err)
     })
 }

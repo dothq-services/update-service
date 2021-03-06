@@ -2,24 +2,18 @@ import React from 'react'
 import { Layout } from '../../components/Layout'
 import { Content } from '../../components/Content'
 import { useRouter } from 'next/router'
-import { useCookies } from 'react-cookie'
+import * as cookie from 'cookie'
+import { GetServerSideProps } from 'next'
 
-const Callback = () => {
-    const { query } = useRouter();
-    const router  = useRouter();
-    const [cookie, setCookie] = useCookies(["token"])
-
-    React.useEffect(() => {
-        if (query.token) {
-            setCookie('token', query.token, {
-                path: '/',
-                expires: new Date(Date.UTC(9999, 11, 31, 23, 59, 59))
-            })
+const Callback = (props) => {
+    if (props.isSuccess === true) {
+        const router  = useRouter();
+        React.useEffect(() => {
             router.push('/')
-        } else {
-            // do something to let user know something went wrong
-        }
-    }, [query.token])
+        })
+    } else {
+        // Something went wrong yay
+    }
 
     return (
         <Layout>
@@ -32,6 +26,30 @@ const Callback = () => {
             </Content>
         </Layout>
     )
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const cookies = cookie.parse(context.req ? context.req.headers.cookie || "" : document.cookie)
+    const token = context.query.token
+    let isSuccess: boolean = false;
+
+    if (token) {
+        context.res.setHeader('Set-Cookie', cookie.serialize('token', String(token), {
+            path: '/',
+            expires: new Date(Date.UTC(9999, 11, 31, 23, 59, 59))
+        }));
+
+        isSuccess = true
+        console.log(isSuccess)
+    }
+
+    return {
+        props: {
+            cookies,
+            token,
+            isSuccess
+        }
+    }
 }
 
 export default Callback;
