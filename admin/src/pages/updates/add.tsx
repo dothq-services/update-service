@@ -1,66 +1,136 @@
 import React from 'react'
 import { Layout } from '../../components/Layout'
 import { Content } from '../../components/Content'
-import { TextField, Checkbox, InputLabel, MenuItem, FormHelperText, FormControl, FormControlLabel, Select, Button } from '@material-ui/core'
-import { FormLocaleSelector } from '../../components/Form/Locale'
-import { FormTargetSelector } from '../../components/Form/Target'
+import { TextField, Checkbox, InputLabel, MenuItem, FormHelperText, FormControl, FormControlLabel, Select, Button, Input } from '@material-ui/core'
 import axios from 'axios'
 import * as cookie from 'cookie'
 import { useRouter } from 'next/router'
 import { GetServerSideProps } from 'next'
+import { useFormik } from 'formik'
+
+/**
+ * A Formik wrapper for the Material Design Text Field
+ * @param label Placeholder label
+ * @param formID ID and Name used for Javascript calls
+ * @param helperText Label shown under the input. Most likely used for a description
+ * @param props Other props to use, such as Value, and onChange
+ */
+const MaterialTextField = ({ label, formID, helperText, ...props }) => {
+    return (
+        <div className={'form-control'}>
+            <TextField
+                fullWidth
+                variant={"outlined"}
+                id={formID}
+                name={formID}
+                label={label}
+                helperText={helperText}
+                {...props}
+            />
+        </div>
+    )
+}
+
+/**
+ * A Formik wrapper for the Material Design Checkbox
+ * @param label Placeholder label
+ * @param formID ID and Name used for Javascript calls
+ * @param helperText Label shown next to the input. Most likely used for a description
+ * @param props Other props to use, such as Checked, and onChange
+ */
+const MaterialCheckbox = ({ label, formID, helperText, ...props }) => {
+    return (
+        <div className={'form-control'}>
+            <FormControl>
+                <FormControlLabel 
+                    control={
+                        <Checkbox
+                            name={formID}
+                            color="primary"
+                            {...props}
+                        />
+                    }
+                    label={label}/>
+                <FormHelperText>{helperText}</FormHelperText>
+            </FormControl>
+        </div>
+    )
+}
+
+/**
+ * A Formik wrapper for the Material Design Select
+ * @param label Placeholder label
+ * @param formID ID and Name used for Javascript calls
+ * @param helperText Label shown next to the input. Most likely used for a description
+ * @param error Activates red error color
+ * @param props Other props to use, such as Checked, and onChange
+ */
+const MaterialSelect = ({ label, formID, helperText, error, ...props }) => {
+    return (
+        <div className={'form-control'}>
+            <FormControl
+                variant="outlined"
+                fullWidth
+                error={error}>
+                <InputLabel>{label}</InputLabel>
+                <Select
+                    labelId={`${formID}-label`}
+                    id={formID}
+                    label={label}
+                    {...props} >
+                        {props.children}
+                    </Select>
+                <FormHelperText>{helperText}</FormHelperText>
+            </FormControl>
+        </div>
+    )
+}
 
 const AddUpdate = (props) => {
     const router  = useRouter();
 
-    if (props.noAuth) {
-        router.push('/noauth')
-    }
-
-    // Form
-    const [availableProducts, setAProducts] = React.useState([]);
-    const [currentUploadedFile, setCurrentUploadedFile] = React.useState('')
-    const [advancedMode, setAdvancedMode] = React.useState(false);
-    const [productKey, setProductKey] = React.useState('');
-    const [product, setProduct] = React.useState(({} as any));
-    const [locale, setLocale] = React.useState('');
-    const [releaseFileCheckbox, setReleaseFileCheckbox] = React.useState(true)
-    const [releaseTypeCheckbox, setReleaseTypeCheckbox] = React.useState(true)
-
-    const handleProductChange = (event) => {
-        if(availableProducts.find(i => i.id == event.target.value)) {
-            const product = availableProducts.find(i => i.id == event.target.value);
-
-            console.log(product);
-
-            setProductKey(event.target.value);
-            setProduct(product);
-
-            if(product.availableLocales) setLocale(product.availableLocales[0])
-        }
-    };
-
-    const handleReleaseFileCheckboxChange = (event) => {
-        setReleaseFileCheckbox(event.target.checked)
-    }
-    const handleReleaseTypeCheckboxChange = (event) => {
-        setReleaseTypeCheckbox(event.target.checked)
-    }
+    const [advancedMode, activateAdvancedMode] = React.useState(true)
+    const [isUploadingFiles, setUploadingFiles] = React.useState(true)
+    const [uploadedFile, setUploadedFile] = React.useState('')
 
     const getFileName = (path) => {
         if (path.substr(0, 12) == "C:\\fakepath\\")
         return path.substr(12);
     }
 
-    React.useEffect(() => {
-        if(availableProducts.length !== 0) return;
+    if (props.noAuth) {
+        router.push('/noauth')
+    }
 
-        axios.get("/api/get/products") 
-            .then(({ data }) => {
-                setAProducts(data.products);
-            })
-        
-    }, [availableProducts])
-
+    const formik = useFormik({
+        initialValues: {
+            name: '',
+            product: '',
+            channel: '',
+            target: '',
+            locale: '',
+            version: '',
+            displayVersion: '',
+            buildID: '',
+            whatsNewURL: '',
+            releaseNotesURL: '',
+            releaseFileURL: '',
+            releaseFileSize: '',
+            releaseFileChecksum: ''
+        },
+        validate: values => {
+            const errors = {};
+            for (let i = 0; i < Object.keys(values).length; i++) {
+                if (!Object.values(values)[i]) {
+                    errors[Object.keys(values)[i]] = 'Required Field'
+                }
+            }
+            return errors
+        },
+        onSubmit: values => {
+            alert(JSON.stringify(values, null, 2))
+        }
+    })
     return (
         <Layout uData={props.userData} isAuth={props.isAuth}>
             <Content primary>
@@ -70,254 +140,169 @@ const AddUpdate = (props) => {
                     </div>
                 </div>
             </Content>
-            <Content>
-                <div className={'grid'}>
+            <form onSubmit={formik.handleSubmit}>
+                <Content>
                     <div className={'flex-grid'}>
-                        <div className={'form-control'}>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                id="rName"
-                                name="rName"
-                                label="Release name (Ex. Dot-1.0-build1)"
-                                value={""}
-                                onChange={null}
-                                error={null}
-                                helperText={'Release name for use within Admin UI.'}
-                            />
+                        <MaterialTextField
+                            label={"Release Name"} 
+                            formID={"name"}
+                            helperText={formik.errors.name ? formik.errors.name : `Release name for use within the Admin UI`}
+                            onChange={formik.handleChange('name')}
+                            value={formik.values.name} 
+                            error={formik.errors.name ? true : ''}/>
+
+                        <MaterialSelect
+                            label={"Product"} 
+                            formID={"product"}
+                            helperText={formik.errors.product ? formik.errors.product : `Product to tag release under`}
+                            onChange={formik.handleChange('product')}
+                            value={formik.values.product} 
+                            error={formik.errors.product ? true : ''}>
+                            <MenuItem value={'Dot Browser'}>Dot Browser</MenuItem>
+                        </MaterialSelect>
+                    </div>
+                </Content>
+                <Content primary visible={!advancedMode}>
+                    <div className={'flex-grid'}>
+                        <MaterialSelect
+                            label={"Channel"} 
+                            formID={"channel"}
+                            helperText={formik.errors.channel ? formik.errors.channel : `Release Channel`}
+                            onChange={formik.handleChange('channel')}
+                            value={formik.values.channel} 
+                            error={formik.errors.channel ? true : ''}>
+                            <MenuItem value={'release'}>Release</MenuItem>
+                        </MaterialSelect>
+
+                        <MaterialSelect
+                            label={"Target"} 
+                            formID={"target"}
+                            helperText={formik.errors.target ? formik.errors.target : `Build Target`}
+                            onChange={formik.handleChange('target')}
+                            value={formik.values.target} 
+                            error={formik.errors.target ? true : ''}>
+                            <MenuItem value={'Linux_x86_64-gcc3'}>Linux_x86_64-gcc3</MenuItem>
+                        </MaterialSelect>
+                    </div>
+                    <div style={{ margin: 20 }} />
+                    <div className={'flex-grid'}>
+                        <MaterialSelect
+                            label={"Locale"} 
+                            formID={"locale"}
+                            helperText={formik.errors.locale ? formik.errors.locale : `Locale for the release`}
+                            onChange={formik.handleChange('locale')}
+                            value={formik.values.locale} 
+                            error={formik.errors.locale ? true : ''}>
+                            <MenuItem value={'en-GB'}>en-GB</MenuItem>
+                        </MaterialSelect>
+
+                        <MaterialTextField
+                            label={"Version Number"} 
+                            formID={"version"}
+                            helperText={formik.errors.version ? formik.errors.version : `Version (Ex. 1.0)`}
+                            onChange={formik.handleChange('version')}
+                            value={formik.values.version} 
+                            error={formik.errors.version ? true : ''}/>
+                    </div>
+                    <div style={{ margin: 20 }} />
+                    <div className={'flex-grid'}>
+                        <MaterialTextField
+                            label={"Display Version Number"} 
+                            formID={"displayversion"}
+                            helperText={formik.errors.displayVersion ? formik.errors.displayVersion : `Version (Ex. 1.0 Beta 1)`}
+                            onChange={formik.handleChange('displayVersion')}
+                            value={formik.values.displayVersion} 
+                            error={formik.errors.displayVersion ? true : ''}/>
+
+                        <MaterialTextField
+                            label={"Build ID"} 
+                            formID={"buildID"}
+                            helperText={formik.errors.buildID ? formik.errors.buildID : `Build ID (Ex. 20210225185804)`}
+                            onChange={formik.handleChange('buildID')}
+                            value={formik.values.buildID} 
+                            error={formik.errors.buildID ? true : ''}/>
+                    </div>
+                    <div style={{ margin: 20 }} />
+                    <div className={'flex-grid'}>
+                        <MaterialTextField
+                            label={"What's New URL"} 
+                            formID={"whatsNewURL"}
+                            helperText={formik.errors.whatsNewURL ? formik.errors.whatsNewURL : `URL that opens on start. Can feature %OLD_VERSION% (Ex. https://dothq.co/whatsnew/%OLD_VERSION%)`}
+                            onChange={formik.handleChange('whatsNewURL')}
+                            value={formik.values.whatsNewURL} 
+                            error={formik.errors.whatsNewURL ? true : ''}/>
+
+                        <MaterialTextField
+                            label={"Release Notes URL"} 
+                            formID={"releaseNotesURL"}
+                            helperText={formik.errors.releaseNotesURL ? formik.errors.releaseNotesURL : `Release Notes URL (Ex. https://dothq.co/release/1.0)`}
+                            onChange={formik.handleChange('releaseNotesURL')}
+                            value={formik.values.releaseNotesURL} 
+                            error={formik.errors.releaseNotesURL ? true : ''}/>
+                    </div>
+                    <div style={{ margin: 20 }} />
+                    <div className={'flex-grid'}>
+                        <MaterialCheckbox 
+                            label={"Upload Release Files"}
+                            formID={"fUploadCheckbox"}
+                            helperText={'Upload release files, or specify a custom URL'}
+                            onChange={() => setUploadingFiles(!isUploadingFiles)}
+                            checked={isUploadingFiles} />
+
+                        <div style={{ display: isUploadingFiles ? 'initial' : 'none' }}>
+                            <label className={'btn btn-primary'} htmlFor={"uploadFile"} style={{ marginRight: 10 }}>Upload Release File</label>
+                                <input 
+                                    type={'file'} 
+                                    id={"uploadFile"} 
+                                    multiple={false}
+                                    onChange={e => setUploadedFile(e.target.value)}/>
+                                <p>{getFileName(uploadedFile)}</p>
                         </div>
-                        <div className={'form-control'}>
-                            <FormControl 
-                            variant="outlined"
-                            fullWidth>
-                                <InputLabel>Product</InputLabel>
-                                <Select
-                                    labelId="rProduct-label"
-                                    id="rProduct"
-                                    value={productKey}
-                                    onChange={handleProductChange}
-                                    label="Product"
-                                >
-                                    {availableProducts && availableProducts.map(product => (
-                                        <MenuItem key={product.id} value={product.id}>{product.name}</MenuItem>
-                                    ))}
-                                </Select>
-                                <FormHelperText>Product to tag release under</FormHelperText>
-                            </FormControl>
+
+                        <div style={{ display: !isUploadingFiles ? 'initial' : 'none' }}>
+                            <MaterialTextField
+                                label={"Release File URL"} 
+                                formID={"releaseFileURL"}
+                                helperText={formik.errors.releaseFileURL ? formik.errors.releaseFileURL : `URL for Release File (Ex. https://cdn.dothq.co/%OS%/%LANG%/release.mar)`}
+                                onChange={formik.handleChange('releaseFileURL')}
+                                value={formik.values.releaseFileURL} 
+                                error={formik.errors.releaseFileURL ? true : ''}/>
                         </div>
                     </div>
-                </div>
-            </Content>
-            {/**
-             * SIMPLE MODE
-             * This mode uses the fun dialog boxes and stuff. It's hard to do large releases with, due to the fact that it requires you to specify custom files for each language
-             */}
-            <Content primary visible={advancedMode}>
-                <div className={'flex-grid'}>
-                    <div className={'form-control'}>
-                        <FormLocaleSelector locales={!!product ? product.availableLocales : []} />
+                    <div style={{ display: !isUploadingFiles ? 'initial' : 'none' }}>
+                        <div style={{ margin: 20 }} />
+                        <div className={'flex-grid'}>
+                            <MaterialTextField
+                                label={"Release File Size"} 
+                                formID={"releaseFileSize"}
+                                helperText={formik.errors.releaseFileSize ? formik.errors.releaseFileSize : `Size of Release File in Bytes`}
+                                onChange={formik.handleChange('releaseFileSize')}
+                                value={formik.values.releaseFileSize} 
+                                error={formik.errors.releaseFileSize ? true : ''}/>
+
+                            <MaterialTextField
+                                label={"Release File SHA512 Checksum"} 
+                                formID={"releaseFileChecksum"}
+                                helperText={formik.errors.releaseFileChecksum ? formik.errors.releaseFileChecksum : `SHA512 Checksum for Release File`}
+                                onChange={formik.handleChange('releaseFileChecksum')}
+                                value={formik.values.releaseFileChecksum} 
+                                error={formik.errors.releaseFileChecksum ? true : ''}/>
+                        </div>
                     </div>
-                    <div className={'form-control'}>
-                        <FormTargetSelector />
-                    </div>
-                </div>
-                <div style={{ margin: 20 }} />
-                <div className={'flex-grid'}>
-                    <div className={'form-control'}>
-                        <TextField
-                            fullWidth
-                            variant="outlined"
-                            id="rVersion"
-                            name="rVersion"
-                            label="Version Number (Ex. 1.0)"
-                            value={""}
-                            onChange={null}
-                            error={null}
-                            helperText={'Update Version'}
-                            />
-                    </div>
-                    <div className={'form-control'}>
-                        <TextField
-                            fullWidth
-                            variant="outlined"
-                            id="rVersionPretty"
-                            name="rVersionPretty"
-                            label="Display Version Number (Ex. 1.0 Beta 1)"
-                            value={""}
-                            onChange={null}
-                            error={null}
-                            helperText={'Displayed version number'}
-                            />
-                    </div>
-                </div>
-                <div style={{ margin: 20 }} />
-                <div className={'flex-grid'}>
-                    <div className={'form-control'}>
-                        <TextField
-                            fullWidth
-                            variant="outlined"
-                            id="rBuildID"
-                            name="rBuildID"
-                            label="Build ID (Ex. 20210225185804)"
-                            value={""}
-                            onChange={null}
-                            error={null}
-                            helperText={'Version Build ID'}
-                            />
-                    </div>
-                    <div className={'form-control'}>
-                        <TextField
-                            fullWidth
-                            variant="outlined"
-                            id="rWhatsnew"
-                            name="rWhatsnew"
-                            label="What's New URL (Ex. https://whatsnew.dothq.co/1.0)"
-                            value={""}
-                            onChange={null}
-                            error={null}
-                            helperText={'URL that opens on start (can feature %OLD_VERSION% parameter)'}
-                            />
-                    </div>
-                </div>
-                <div style={{ margin: 20 }} />
-                <div className={'flex-grid'}>
-                    <div className={'form-control'}>
-                        <TextField
-                            fullWidth
-                            variant="outlined"
-                            id="rReleasenotes"
-                            name="rReleasenotes"
-                            label="Release Notes URL (Ex. https://releasenotes.dothq.co/1.0)"
-                            value={""}
-                            onChange={null}
-                            error={null}
-                            helperText={'Release Notes URL'}
-                            />
-                    </div>
-                    <div className={'form-control'}>
-                        <FormControl>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={releaseFileCheckbox}
-                                        onChange={handleReleaseFileCheckboxChange}
-                                        name="rUploadFile"
-                                        color="primary"
-                                    />
-                                }
-                                label="Upload Release Files"
-                            />
-                            <FormHelperText>Upload release files, or specify a custom URL</FormHelperText>
-                        </FormControl>
-                    </div>
-                </div>
-                <div style={{ margin: 20 }} />
-                <div className={'flex-grid'} style={{ display: releaseFileCheckbox === true ? 'flex' : 'none' }}>
-                    <div className={'form-control'}
-                    style={{ display: 'flex', alignItems: 'center' }}>
-                        <label className={'btn btn-primary'} htmlFor={"rReleaseFile"} style={{ marginRight: 10 }}>Upload Release File</label>
-                        <input 
-                            type={'file'} 
-                            id={"rReleaseFile"} 
-                            multiple={false}
-                            onChange={e => setCurrentUploadedFile(e.target.value)}/>
-                        <p>{getFileName(currentUploadedFile)}</p>
-                    </div>
-                    <div className={'form-control'}>
-                        <FormControl>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={releaseTypeCheckbox}
-                                        onChange={handleReleaseTypeCheckboxChange}
-                                        name="rReleaseType"
-                                        color="primary"
-                                    />
-                                }
-                                label="Major Release"
-                            />
-                            <FormHelperText>Set whether the release is a major or minor release</FormHelperText>
-                        </FormControl>
-                    </div>
-                </div>
-                <div className={'flex-grid'} style={{ display: releaseFileCheckbox === false ? 'flex' : 'none' }}>
-                    <div className={'form-control'}>
-                        <TextField
-                            fullWidth
-                            variant="outlined"
-                            id="rReleaseFileURL"
-                            name="rReleaseFileURL"
-                            label="Release File URL (Ex. https://cdn.dothq.co/%OS%/%LANG%/dot_1.0.mar)"
-                            value={""}
-                            onChange={null}
-                            error={null}
-                            helperText={'URL to Release File'}
-                            />
-                    </div>
-                    <div className={'form-control'}>
-                        <TextField
-                            fullWidth
-                            variant="outlined"
-                            id="rReleaseFileURLSize"
-                            name="rReleaseFileURLSize"
-                            label="Release File URL Size (Ex. 80088440)"
-                            value={""}
-                            onChange={null}
-                            error={null}
-                            helperText={'Size of Release File in Bytes'}
-                            />
-                    </div>
-                </div>
-                <div style={{ margin: 20, display: releaseFileCheckbox === false ? 'flex' : 'none' }} />
-                <div className={'flex-grid'} style={{ display: releaseFileCheckbox === false ? 'flex' : 'none' }}>
-                    <div className={'form-control'}>
-                        <TextField
-                            fullWidth
-                            variant="outlined"
-                            id="rReleaseFileURLSha"
-                            name="rReleaseFileURLSha"
-                            label="Release File SHA512 Checksum"
-                            value={""}
-                            onChange={null}
-                            error={null}
-                            helperText={'The SHA512 Checksum for the Release File'}
-                            />
-                    </div>
-                    <div className={'form-control'}>
-                        <FormControl>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={releaseTypeCheckbox}
-                                        onChange={handleReleaseTypeCheckboxChange}
-                                        name="rReleaseType"
-                                        color="primary"
-                                    />
-                                }
-                                label="Major Release"
-                            />
-                            <FormHelperText>Set whether the release is a major or minor release</FormHelperText>
-                        </FormControl>
-                    </div>
-                </div>
-            </Content>
-            {/**
-             * ADVANCED MODE
-             * This mode uses a large text field that allows you to submit releases with JSON. No fancy, simple dialog boxes, but easier for large releases
-             */}
-            <Content primary visible={!advancedMode}>
-                <p>Advanced Mode is Currently Unfinished! Sorry</p>
-            </Content>
-            <Content primary>
+                </Content>
+                <Content primary visible={advancedMode}>
+                    <p>Advanced Mode is a work in progress!</p>
+                </Content>
+                <Content>
                 <div className={'grid'}>
                     <div className={'flex-grid'}>
                         <Button
-                            onClick={() => {setAdvancedMode(!advancedMode)}}
+                            onClick={() => {activateAdvancedMode(!advancedMode)}}
                             color="secondary" 
                             variant="contained" 
                             disableElevation
                         >
-                            {advancedMode === true ? 'Simple' : 'Advanced'} Mode
+                            {!advancedMode ? 'Simple' : 'Advanced'} Mode
                         </Button>
                         <div>
                             <Button variant="contained" color="primary" disableElevation>
@@ -326,7 +311,8 @@ const AddUpdate = (props) => {
                         </div>
                     </div>
                 </div>
-            </Content>
+                </Content>
+            </form>
         </Layout>
     )
 }
