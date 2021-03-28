@@ -1,6 +1,4 @@
 import { Sequelize, DataTypes } from 'sequelize'
-import path from 'path'
-require('dotenv').config({ path: path.resolve('..', '..', '.env')})
 
 const {
     DB_HOST,
@@ -32,6 +30,10 @@ export const Releases = db.define('releases', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    channel: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     locale: {
         type: DataTypes.STRING,
         allowNull: false
@@ -44,7 +46,7 @@ export const Releases = db.define('releases', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    displayversion: {
+    displayVersion: {
         type: DataTypes.STRING,
         allowNull: false
     },
@@ -52,35 +54,27 @@ export const Releases = db.define('releases', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    whatsnewurl: {
+    whatsNewURL: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    releasenotesurl: {
+    releaseNotesURL: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    releaseurl: {
+    releaseFileURL: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    releasesha512: {
+    releaseFileChecksum: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    releasetype: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    channel: {
+    releaseType: {
         type: DataTypes.STRING,
         allowNull: false
     },
     id: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    releasesize: {
         type: DataTypes.INTEGER,
         allowNull: false
     }
