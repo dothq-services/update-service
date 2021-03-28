@@ -275,17 +275,15 @@ const AddUpdate = (props) => {
                     </div>
                     <div style={{ margin: 20 }} />
                     <div className={'flex-grid'}>
-                            <MaterialTextField
-                                label={"Release File URL"} 
-                                formID={"releaseFileURL"}
-                                helperText={formik.errors.releaseFileURL ? formik.errors.releaseFileURL : `URL for Release File (Ex. https://cdn.dothq.co/%OS%/%LANG%/release.mar)`}
-                                onChange={formik.handleChange('releaseFileURL')}
-                                value={formik.values.releaseFileURL} 
-                                error={formik.errors.releaseFileURL ? true : false}
-                                disabled={isSubmitting} />
-                    </div>
-                    <div style={{ margin: 20 }} />
-                    <div className={'flex-grid'}>
+                        <MaterialTextField
+                            label={"Release File URL"} 
+                            formID={"releaseFileURL"}
+                            helperText={formik.errors.releaseFileURL ? formik.errors.releaseFileURL : `URL for Release File (Ex. https://cdn.dothq.co/%OS%/%LANG%/release.mar)`}
+                            onChange={formik.handleChange('releaseFileURL')}
+                            value={formik.values.releaseFileURL} 
+                            error={formik.errors.releaseFileURL ? true : false}
+                            disabled={isSubmitting} />
+
                         <MaterialTextField
                             label={"Release File Size"} 
                             formID={"releaseFileSize"}
@@ -295,6 +293,9 @@ const AddUpdate = (props) => {
                             error={formik.errors.releaseFileSize ? true : false}
                             disabled={isSubmitting} />
 
+                    </div>
+                    <div style={{ margin: 20 }} />
+                    <div className={'flex-grid'}>
                         <MaterialTextField
                             label={"Release File SHA512 Checksum"} 
                             formID={"releaseFileChecksum"}
