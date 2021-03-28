@@ -40,8 +40,8 @@ app.get('/update/1/:product/:version/:buildID/:buildTarget/:locale/:channel/upda
         res.header("Content-Type", "text/xml");
         res.end(`<?xml version="1.0"?>
 <updates>
-        <update actions="showURL" appVersion="${data.version}" buildID="${data.buildID}" detailsURL="${data.releasenotesurl}" displayVersion="${data.displayversion}" openURL="${data.whatsnewurl}" type="${data.releasetype}">
-            <patch type="complete" URL="${data.releaseurl}" hashFunction="sha512" hashValue="${data.releasesha512}" size="${data.releasesize}" />
+        <update actions="showURL" appVersion="${data.version}" buildID="${data.buildID}" detailsURL="${data.releaseNotesURL}" displayVersion="${data.displayVersion}" openURL="${data.whatsNewURL}" type="${data.releaseType}">
+            <patch type="complete" URL="${data.releaseURL}" hashFunction="sha512" hashValue="${data.releaseFileChecksum}" size="${data.releaseSize}" />
         </update>
 </updates>`);
     } else {
