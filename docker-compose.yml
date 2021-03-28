@@ -4,9 +4,10 @@ version: '3.1'
 
 services:
   dotupdate-db:
+    container_name: dotupdate-db
     build:
-      context: .
-      dockerfile: Dockerfile.database
+      context: ./db/.
+      dockerfile: Dockerfile
     expose:
       - "3306"
     ports:
@@ -25,6 +26,7 @@ services:
       - .env
 
   dotupdate-public:
+    container_name: dotupdate-public
     build:
       context: ./public/.
       dockerfile: Dockerfile
@@ -34,21 +36,11 @@ services:
       - "9010:9010"
     volumes:
       - ./public:/app
-
-  dotupdate-fileserver:
-    build:
-      context: ./fs/.
-      dockerfile: Dockerfile
-    expose:
-      - "9050"
-    ports:
-      - "9050:9050"
-    volumes:
-      - ./fs:/app
     env_file:
       - .env
 
   dotupdate-admin:
+    container_name: dotupdate-admin
     build:
       context: ./admin/.
       dockerfile: Dockerfile
