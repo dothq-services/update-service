@@ -25,7 +25,7 @@ yarn
 ## Usage
 
 ```sh
-./start.sh
+docker-compose up -d
 ```
 
 ## Services
@@ -37,6 +37,7 @@ yarn
 
 * Node.js
 * Docker
+* Docker-Compose
 * yarn
 
 ## Author
@@ -62,4 +63,4 @@ Give a ⭐️ if this project helped you!
 ## 📝 License
 
 Copyright © 2021 [Dot HQ <contact@dothq.co>](https://github.com/dothq).<br />
-This project is [MPL--2.0](https://www.mozilla.org/en-US/MPL/2.0) licensed.
+This project is [MPL-2.0](https://www.mozilla.org/en-US/MPL/2.0) licensed.
