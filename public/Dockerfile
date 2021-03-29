@@ -1,11 +1,20 @@
 FROM node:12
 
-WORKDIR /app
+ENV PORT 9010
 
-COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
+# Create app directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
-RUN npm install --production --silent && mv node_modules ../
+# Installing dependencies
+COPY package*.json /usr/src/app/
+RUN npm install
 
-COPY . .
+# Copying source files
+COPY . /usr/src/app
 
-CMD npm start
+# Building app
+RUN npm run build
+
+# Running the app
+CMD "npm" "run" "dev"
