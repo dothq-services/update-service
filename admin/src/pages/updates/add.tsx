@@ -101,7 +101,7 @@ const AddUpdate = (props) => {
     };
 
     if (props.noAuth) {
-        router.push('/noauth')
+        typeof window !== 'undefined' && router.push('/noauth')
     }
 
     const formik = useFormik({

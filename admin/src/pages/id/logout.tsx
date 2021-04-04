@@ -11,7 +11,7 @@ const Logout = () => {
     React.useEffect(() => {
         // idk how to logout of oauth, so let's just remove the token
         removeCookie('token')
-        router.push('/')
+        typeof window !== 'undefined' && router.push('/')
     })
 
     return (

@@ -9,7 +9,7 @@ const Callback = (props) => {
     if (props.isSuccess === true) {
         const router  = useRouter();
         React.useEffect(() => {
-            router.push('/')
+            typeof window !== 'undefined' && router.push('/')
         })
     } else {
         // Something went wrong yay

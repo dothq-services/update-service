@@ -7,7 +7,7 @@ const Login = () => {
     const router = useRouter();
     
     React.useEffect(() => {
-        router.push({
+        typeof window !== 'undefined' && router.push({
             pathname: '/api/id/login'
         })
     })

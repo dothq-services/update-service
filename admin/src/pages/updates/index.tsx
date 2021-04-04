@@ -12,7 +12,7 @@ const Updates = (props) => {
     const router  = useRouter();
 
     if (props.noAuth) {
-        router.push('/noauth')
+        typeof window !== 'undefined' && router.push('/noauth')
     }
     
     return (
