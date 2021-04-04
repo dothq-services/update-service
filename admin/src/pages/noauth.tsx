@@ -10,7 +10,9 @@ const Index = (props) => {
     const router = useRouter();
 
     if (props.noAuth) {
-        typeof window !== 'undefined' && router.push('/noauth')
+        if(typeof window !== 'undefined') {
+            if(router.route !== "/noauth") router.push('/noauth')
+        } 
     }
 
     return (
