@@ -37,6 +37,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
         await axios.post(`http://${req.headers.host}/api/id/getOrganizations`, {
             token: param.token
+        }, {
+            headers: {
+                "content-type": "application/json",
+                "accept": "application/json"
+            }
         }).then((values) => { 
             if (values.data.success === 'userValid') {
                 // Create a new release on the Database

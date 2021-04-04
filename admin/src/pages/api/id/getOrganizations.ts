@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     const token = jwt.verify(
-        req.cookies.token,
+        req.body.token,
         process.env.JWT_KEY
     )
     axios.get('https://api.github.com/user/orgs', {

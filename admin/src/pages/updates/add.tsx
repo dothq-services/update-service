@@ -145,6 +145,10 @@ const AddUpdate = (props) => {
                         releaseFileSize: values.releaseFileSize,
                         releaseFileChecksum: values.releaseFileChecksum,
                         token: props.cookies.token
+                    }, {
+                        headers: {
+                            "content-type": "application/json"
+                        }
                     }).then(() => { 
                         setReleaseSuccess(true)
                         setIsSubmitting(false)
@@ -363,6 +367,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (cookies.token !== undefined ) {
         await axios.post(`http://${context.req.headers.host}/api/id/getOrganizations`, {
             token: cookies.token
+        }, {
+            headers: {
+                "content-type": "application/json",
+                "accept": "application/json"
+            }
         }).then((res) => { 
             if (res.data.success === 'userValid') {
                 isAuth = true
@@ -373,6 +382,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (isAuth) {
         await axios.post(`http://${context.req.headers.host}/api/id/getProfile`, {
             token: cookies.token
+        }, {
+            headers: {
+                "content-type": "application/json",
+                "accept": "application/json"
+            }
         }).then((res) => {
             userData = res.data;
         })
