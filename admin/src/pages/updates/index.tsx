@@ -40,11 +40,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 
     if (cookies.token !== undefined ) {
-        await axios.post(`http://${context.req.headers.host}/api/id/getOrganizations`, {
+        await axios.post(`${context.req.headers.host}/api/id/getOrganizations`, {
             token: cookies.token
         }, {
             headers: {
-                "content-type": "application/json",
+                "Content-Type": "application/json",
                 "accept": "application/json"
             }
         }).then((res) => { 
@@ -55,11 +55,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
 
     if (isAuth) {
-        await axios.post(`http://${context.req.headers.host}/api/id/getProfile`, {
+        await axios.post(`${context.req.headers.host}/api/id/getProfile`, {
             token: cookies.token
         }, {
             headers: {
-                "content-type": "application/json",
+                "Content-Type": "application/json",
                 "accept": "application/json"
             }
         }).then((res) => {
