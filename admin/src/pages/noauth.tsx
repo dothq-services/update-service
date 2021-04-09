@@ -5,6 +5,7 @@ import * as cookie from 'cookie'
 import axios from 'axios'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
+import { apiURLProtocol } from '../protocol'
 
 const Index = (props) => {
     const router = useRouter();
@@ -38,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 
     if (cookies.token !== undefined ) {
-        await axios.post(`${context.req.headers.host}/api/id/getOrganizations`, {
+        await axios.post(`${apiURLProtocol()}://${context.req.headers.host}/api/id/getOrganizations`, {
             token: cookies.token
         }, {
             headers: {

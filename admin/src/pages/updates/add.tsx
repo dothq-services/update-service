@@ -7,6 +7,7 @@ import * as cookie from 'cookie'
 import { useRouter } from 'next/router'
 import { GetServerSideProps } from 'next'
 import { useFormik } from 'formik'
+import { apiURLProtocol } from '../../protocol'
 
 /**
  * A Formik wrapper for the Material Design Text Field
@@ -382,7 +383,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
 
     if (isAuth) {
-        await axios.post(`${context.req.headers.host}/api/id/getProfile`, {
+        await axios.post(`${apiURLProtocol()}://${context.req.headers.host}/api/id/getProfile`, {
             token: cookies.token
         }, {
             headers: {
