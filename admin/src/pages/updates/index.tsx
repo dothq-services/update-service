@@ -41,7 +41,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 
     if (cookies.token !== undefined ) {
-        await axios.post(`${context.req.headers.host}/api/id/getOrganizations`, {
+        await axios.post(`${apiURLProtocol()}://${context.req.headers.host}/api/id/getOrganizations`, {
             token: cookies.token
         }, {
             headers: {
