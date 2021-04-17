@@ -1,7 +1,7 @@
 import React from 'react'
 import { Footer } from './Footer'
 import { Header } from './Header'
-import { ThemeProvider } from '@material-ui/core'
+import { ThemeProvider, useMediaQuery } from '@material-ui/core'
 import { theme } from '../theme'
 
 const SizeWarning = () => {
@@ -22,8 +22,11 @@ export const Layout = ({
   uData?: any,
   isAuth?: any
 }) => {
+
+  const darkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme(darkMode)}>
       <SizeWarning />
       <section className={`hero`}>
         <Header uData={uData} isAuth={isAuth}/>
