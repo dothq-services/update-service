@@ -41,7 +41,7 @@ app.get('/update/:randomNumberThing/:product/:version/:buildID/:buildTarget/:loc
         res.end(`<?xml version="1.0"?>
 <updates>
         <update actions="showURL" appVersion="${data.version}" buildID="${data.buildID}" detailsURL="${data.releaseNotesURL}" displayVersion="${data.displayVersion}" openURL="${data.whatsNewURL}" type="${data.releaseType}">
-            <patch type="complete" URL="${data.releaseURL}" hashFunction="sha512" hashValue="${data.releaseFileChecksum}" size="${data.releaseSize}" />
+            <patch type="complete" URL="${data.releaseFileURL}" hashFunction="sha512" hashValue="${data.releaseFileChecksum}" size="${data.releaseSize}" />
         </update>
 </updates>`);
     } else {
